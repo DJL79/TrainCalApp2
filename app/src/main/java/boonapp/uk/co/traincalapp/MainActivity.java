@@ -1,12 +1,16 @@
 package boonapp.uk.co.traincalapp;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,10 +28,24 @@ public class MainActivity extends AppCompatActivity {
 
 
     public static final int DAILY_MAX = 4, WEEKLY_MAX = 19;
-
     int travelDaysNum = 0;
     double dailyCostPrice = 0.0, weeklyCostPrice = 0.0, monthlyCostPrice = 0.0, dailySum = 0.0, weeklySum = 0.0, monthlySum = 0.0;
-    String getDaysTravelled, getDaily, getWeekly, getMonthly;
+    String getDaysTravelled, getDaily, getWeekly, getMonthly, userStr, username;
+
+
+    ////////////////////////////////
+
+    // using SharedPreferences to store the 3 ticket prices entered so the user doesnt have to enter each launch.
+    private SharedPreferences mPreferences;
+    private SharedPreferences.Editor mEditor;
+
+    ///////////////////////////
+
+
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,12 +64,46 @@ public class MainActivity extends AppCompatActivity {
         addResultHighest = findViewById(R.id.txtViewResultHighest);
 
 
+////////////////////////////////////////////////////////////////////
+        // using SharedPreferences to store the 3 ticket prices entered so the user doesnt have to enter each launch.
+
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        //mPreferences = getSharedPreferences("tabian.com.sharedpreferencestest", Context.MODE_PRIVATE);
+        mEditor = mPreferences.edit();
+
+
+        storePricesEntered();
+ //////////////////////////////////////////////////////////////////////
 
 
         btnSubmit.setOnClickListener(new View.OnClickListener() {
             @SuppressLint("SetTextI18n")
             @Override
             public void onClick(View view) {
+
+
+
+
+
+                ///////////////////////////////////////////
+                // using SharedPreferences to store the 3 ticket prices entered so the user doesnt have to enter each launch.
+
+
+                //save the name
+                String daily = dailyCost.getText().toString();
+                mEditor.putString(getString(R.string.dailyprice), daily);
+                mEditor.commit();
+
+                String weekly = weeklyCost.getText().toString();
+                mEditor.putString(getString(R.string.weeklyprice), weekly);
+                mEditor.commit();
+
+                String monthly = monthlyCost.getText().toString();
+                mEditor.putString(getString(R.string.monthlyprice), monthly);
+                mEditor.commit();
+
+                /////////////////////////////////////////////
 
                 CalculateBestPrice();
 
@@ -60,22 +112,14 @@ public class MainActivity extends AppCompatActivity {
                 weeklyCost.setText(Integer.toString(0));
                 monthlyCost.setText(Integer.toString(0));
                 addResult.setText(Integer.toString(0));*/
-/*                //resetting the values to 0 before next submit
-                dailyCost.setText(Integer.toString(0));
-                weeklyCost.setText(Integer.toString(0));
-                monthlyCost.setText(Integer.toString(0));
-                addResult.setText(Integer.toString(0));*/
-/*                //resetting the values to 0 before next submit
-                dailyCost.setText(Integer.toString(0));
-                weeklyCost.setText(Integer.toString(0));
-                monthlyCost.setText(Integer.toString(0));
-                addResult.setText(Integer.toString(0));*/
+
 
             }
         });
 
 
     }
+
 
 
     @SuppressLint("SetTextI18n")
@@ -178,6 +222,21 @@ public class MainActivity extends AppCompatActivity {
             addResultHighest.setText("Most expensive option " + Double.toString(highestPrice));
         }
         }
+
+
+        //////////////////////////////////////////////////////////
+
+    /**
+     * Check the shared preferences and set them accordingly
+     */
+    private void storePricesEntered(){
+        String daily = mPreferences.getString(getString(R.string.dailyprice), "");
+        dailyCost.setText(daily);
+        String weekly = mPreferences.getString(getString(R.string.weeklyprice), "");
+        weeklyCost.setText(weekly);
+        String monthly = mPreferences.getString(getString(R.string.monthlyprice), "");
+        monthlyCost.setText(monthly);
+    }
 }
 
 
