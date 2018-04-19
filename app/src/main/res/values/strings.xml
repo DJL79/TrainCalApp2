@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">TrainCalApp</string>
+    <string name="txtMsg_main">Please enter travel ticket prices blow</string>
 </resources>
